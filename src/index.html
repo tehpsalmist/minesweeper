@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Minesweeper</title>
+  <style>
+    .board {
+      display: flex;
+      flex-direction: column;
+      justify-content: stretch;
+      align-items: stretch;
+      margin: 0 auto;
+    }
+    .smiley-row {
+      display: flex;
+      justify-content: center;
+    }
+    .smiley {
+      text-align: center;
+      font-size: 40px;
+      cursor: pointer;
+      border: none;
+      background-color: transparent;
+    }
+    .cell {
+      height: 40px;
+      width: 40px;
+      display: flex;
+      background-color: gray;
+      justify-content: center;
+      align-items: center;
+      border: solid black 1px;
+      cursor: pointer;
+    }
+    .open-cell {
+      background-color: white;
+    }
+    .cell:hover {
+      background-color: lightgray;
+    }
+  </style>
+</head>
+<body>
+  <div id="minesweeper"></div>
+  <script src="index.js"></script>
+</body>
+</html>
