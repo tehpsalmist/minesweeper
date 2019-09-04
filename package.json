@@ -1,0 +1,32 @@
+{
+  "name": "minesweeper",
+  "version": "0.0.1",
+  "description": "minesweeper, duh.",
+  "main": "index.html",
+  "scripts": {
+    "start": "parcel serve index.html",
+    "build": "parcel build index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/tehpsalmist/minesweeper.git"
+  },
+  "keywords": [
+    "mine",
+    "sweeper"
+  ],
+  "author": "Ben Steward <bstewardcodes@gmail.com> (https://tehpsalmist.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tehpsalmist/minesweeper/issues"
+  },
+  "homepage": "https://github.com/tehpsalmist/minesweeper#readme",
+  "dependencies": {
+    "core-js": "^3.2.1",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0"
+  },
+  "devDependencies": {
+    "parcel": "^2.0.0-alpha.1.1"
+  }
+}
