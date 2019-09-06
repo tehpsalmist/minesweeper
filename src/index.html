@@ -9,8 +9,7 @@
     .board {
       display: flex;
       flex-direction: column;
-      justify-content: stretch;
-      align-items: stretch;
+      align-items: center;
       margin: 0 auto;
     }
     .smiley-row {
@@ -23,6 +22,20 @@
       cursor: pointer;
       border: none;
       background-color: transparent;
+    }
+    .rows-columns {
+      display: flex;
+      justify-content: space-evenly;
+      width: 100%;
+      margin-top: 20px;
+    }
+    .timer {
+      background-color: #333333;
+      color: red;
+      padding: 4px 8px;
+      font-size: 20px;
+      margin-bottom: 20px;
+      border-radius: 4px;
     }
     .cell {
       height: 40px;
@@ -37,8 +50,15 @@
     .open-cell {
       background-color: white;
     }
-    .cell:hover {
+    .closed-cell:hover {
       background-color: lightgray;
+    }
+    .restore-button {
+      margin-top: 20px;
+      background: linear-gradient(blue, darkblue);
+      border-radius: 4px;
+      padding: 8px;
+      color: white;
     }
   </style>
 </head>
