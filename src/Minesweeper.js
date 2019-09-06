@@ -136,7 +136,7 @@ export const Minesweeper = props => {
       </label>
     </div>
     <h2 className='smiley-row'>
-      <button className='smiley' onClick={e => reset()}>{hasWon ? '🥳' : playerAlive ? '🙂' : '😵'}</button>
+      <button className='smiley' onClick={e => reset()}>{hasWon ? '😎' : playerAlive ? '🙂' : '😵'}</button>
     </h2>
     <Timer seconds={timer} />
     {board.map((row, index) => <div key={index} style={{ display: 'flex' }}>
