@@ -4,9 +4,17 @@ import { useInterval } from './hooks'
 import { Cell } from './Cell'
 import { generateBoard, updateBoard, boardCleared } from './board-logic'
 import { Timer } from './Timer'
+import { saveToLeaderboard, Leaderboard, getLeaderboard } from './leaderboard'
 
 export const Minesweeper = props => {
-  const [difficulty, setDifficulty] = useState(0)
+  const [name, setName] = useState(localStorage.getItem('ms-player-name') || 'Anonymous')
+  const updateName = n => {
+    localStorage.setItem('ms-player-name', n)
+    setName(n)
+  }
+
+  const [difficulty, setDifficulty] = useState(Number(localStorage.getItem('ms-difficulty')) || 0)
+
   const [rows, setRows] = useState(10)
   const [cols, setCols] = useState(10)
   const [board, setBoard] = useState(generateBoard(difficulty, rows, cols))
@@ -19,8 +27,10 @@ export const Minesweeper = props => {
 
   const [restoreTime, setRestoreTime] = useState(0)
 
-  const reset = () => {
-    setBoard(generateBoard(difficulty, rows, cols))
+  const [leaderboard, setLeaderboard] = useState(() => getLeaderboard())
+
+  const reset = (r = rows, c = cols, d = difficulty) => {
+    setBoard(generateBoard(d, r, c))
     setHasWon(false)
     setPlayerAlive(true)
     setGameStarted(false)
@@ -40,12 +50,14 @@ export const Minesweeper = props => {
   const restoreGame = () => {
     const savedBoard = localStorage.getItem('board')
     const time = localStorage.getItem('currentTime')
+    const savedDifficulty = localStorage.getItem('ms-difficulty')
 
     if (!savedBoard) return
 
     const restoredBoard = fromJS(JSON.parse(savedBoard))
 
     setBoard(restoredBoard)
+    setDifficulty(savedDifficulty)
     setPlayerAlive(true)
     setHasWon(false)
     setGameStarted(true)
@@ -64,6 +76,7 @@ export const Minesweeper = props => {
       if (!gameStarted) {
         setStartTime(Date.now())
         setGameStarted(true)
+        localStorage.setItem('ms-difficulty', difficulty)
       }
 
       setBoard(updateBoard(board, cell))
@@ -89,6 +102,7 @@ export const Minesweeper = props => {
       localStorage.removeItem('boardTime')
 
       setGameStarted(false)
+      setLeaderboard(saveToLeaderboard(timer, board.size, board.get(0).size, difficulty, name))
       return setHasWon(true)
     }
 
@@ -114,12 +128,22 @@ export const Minesweeper = props => {
   }, gameStarted && 1000)
 
   return <main style={{ width: `${board.get(0).count() * 42}px` }} className='board'>
-    <h1 style={{ textAlign: 'center' }}>Mine Sweeper</h1>
-    <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+    <h1 style={{ textAlign: 'center' }}><pre>minesweeper</pre></h1>
+    <div className='name-difficulty'>
+      <label>Challenger:</label>
+      <input className='name-input' value={name} onChange={e => updateName(e.target.value)} />
       <label htmlFor='difficulty'>Difficulty:</label>
       <div>
         Easy
-        <input id='difficulty' type='range' min={0} max={4} value={difficulty} onChange={e => setDifficulty(Number(e.target.value))} />
+        <input
+          id='difficulty'
+          type='range'
+          min={0}
+          max={4}
+          value={difficulty}
+          onChange={e => setDifficulty(Number(e.target.value))}
+          disabled={gameStarted}
+        />
         Hard
       </div>
     </div>
@@ -127,12 +151,28 @@ export const Minesweeper = props => {
       <label htmlFor='rows'>
         Rows:
         {' '}
-        <input id='rows' type='number' max={100} min={10} value={rows} onChange={e => setRows(Number(e.target.value))} />
+        <input
+          id='rows'
+          type='number'
+          max={100}
+          min={10}
+          value={rows}
+          onChange={e => setRows(Number(e.target.value))}
+          disabled={gameStarted}
+        />
       </label>
       <label htmlFor='cols'>
         Columns:
         {' '}
-        <input id='cols' type='number' max={100} min={10} value={cols} onChange={e => setCols(Number(e.target.value))} />
+        <input
+          id='cols'
+          type='number'
+          max={100}
+          min={10}
+          value={cols}
+          onChange={e => setCols(Number(e.target.value))}
+          disabled={gameStarted}
+        />
       </label>
     </div>
     <h2 className='smiley-row'>
@@ -145,5 +185,6 @@ export const Minesweeper = props => {
     {restoreTime && !gameStarted && <button className='restore-button' type='button' onClick={e => restoreGame()}>
       Restore Game from: {restoreTime}
     </button>}
+    <Leaderboard leaderboard={leaderboard} chooseGame={reset} />
   </main>
 }

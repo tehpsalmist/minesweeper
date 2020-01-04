@@ -1,21 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Minesweeper</title>
   <style>
+    * {
+      font-family: monospace;
+    }
+
+    .name-difficulty {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .name-input {
+      text-align: center;
+      margin-bottom: 20px;
+      color: darkgreen;
+      width: 300px;
+    }
+
     .board {
       display: flex;
       flex-direction: column;
       align-items: center;
       margin: 0 auto;
     }
+
     .smiley-row {
       display: flex;
       justify-content: center;
     }
+
     .smiley {
       text-align: center;
       font-size: 40px;
@@ -23,12 +44,14 @@
       border: none;
       background-color: transparent;
     }
+
     .rows-columns {
       display: flex;
       justify-content: space-evenly;
       width: 100%;
       margin-top: 20px;
     }
+
     .timer {
       background-color: #333333;
       color: red;
@@ -37,6 +60,7 @@
       margin-bottom: 20px;
       border-radius: 4px;
     }
+
     .cell {
       height: 40px;
       width: 40px;
@@ -48,24 +72,55 @@
       font-size: 24px;
       font-weight: 600;
     }
+
     .open-cell {
       background-color: white;
     }
+
     .closed-cell:hover {
       background-color: lightgray;
       cursor: pointer;
     }
+
     .restore-button {
       margin-top: 20px;
       background: linear-gradient(blue, darkblue);
       border-radius: 4px;
       padding: 8px;
       color: white;
+      cursor: pointer;
+    }
+
+    .leaderboard-group-heading {
+      cursor: pointer;
+    }
+
+    .leaderboard-group-heading:hover {
+      color: darkgreen;
+    }
+
+    .record-item {
+      list-style: none;
+      padding: 0;
+    }
+
+    .record-item:nth-of-type(1) .record-time {
+      color: blue;
+    }
+
+    .record-item:nth-of-type(2) .record-time {
+      color: darkgreen;
+    }
+
+    .record-item:nth-of-type(3) .record-time {
+      color: red;
     }
   </style>
 </head>
+
 <body>
   <div id="minesweeper"></div>
   <script src="index.js"></script>
 </body>
+
 </html>
