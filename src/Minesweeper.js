@@ -3,7 +3,7 @@ import { fromJS } from 'immutable'
 import { useInterval } from './hooks'
 import { Cell } from './Cell'
 import { generateBoard, updateBoard, boardCleared } from './board-logic'
-import { Timer } from './Timer';
+import { Timer } from './Timer'
 
 export const Minesweeper = props => {
   const [difficulty, setDifficulty] = useState(0)
