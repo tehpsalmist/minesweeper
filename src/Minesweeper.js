@@ -17,7 +17,7 @@ export const Minesweeper = props => {
 
   const [rows, setRows] = useState(10)
   const [cols, setCols] = useState(10)
-  const [board, setBoard] = useState(generateBoard(difficulty, rows, cols))
+  const [board, setBoard] = useState(() => generateBoard(difficulty, rows, cols))
 
   const [gameStarted, setGameStarted] = useState(false)
   const [playerAlive, setPlayerAlive] = useState(true)
