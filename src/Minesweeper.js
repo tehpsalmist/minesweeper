@@ -68,6 +68,23 @@ export const Minesweeper = props => {
   const cellClicked = cell => e => {
     e.preventDefault()
 
+    if (!gameStarted && !hasWon && playerAlive && cell.get('isBomb')) {
+      const generateSafeBoard = (r, c) => {
+        const newBoard = generateBoard(difficulty, rows, cols)
+
+        if (newBoard.get(r).get(c).get('isBomb')) {
+          return generateSafeBoard(r, c)
+        }
+
+        return newBoard
+      }
+
+      const safeBoard = generateSafeBoard(cell.get('row'), cell.get('col'))
+      const newCell = safeBoard.get(cell.get('row')).get(cell.get('col'))
+
+      return setBoard(updateBoard(safeBoard, newCell))
+    }
+
     if (playerAlive && !hasWon && !cell.get('flagged') && !cell.get('show')) {
       if (cell.get('isBomb')) {
         return gameover()
