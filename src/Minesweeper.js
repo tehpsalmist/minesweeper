@@ -152,7 +152,7 @@ export const Minesweeper = props => {
       localStorage.removeItem('boardTime')
 
       setGameStarted(false)
-      setLeaderboard(saveToLeaderboard(timer, board.size, board.get(0).size, difficulty, name))
+      setLeaderboard(saveToLeaderboard(timer, board.size, board.get(0).size, difficulty, name, board))
       return setHasWon(true)
     }
 

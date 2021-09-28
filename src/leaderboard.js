@@ -1,4 +1,5 @@
 import React from 'react'
+import { hasFlags } from './board-logic'
 import { formatTimer } from './Timer'
 
 const difficulties = {
@@ -36,12 +37,14 @@ const saveLeaderboardObject = leaderboard => {
  * 
  * @returns {void}
  */
-export const saveToLeaderboard = (newTime, newRows, newCols, newDifficulty, name) => {
+export const saveToLeaderboard = (newTime, newRows, newCols, newDifficulty, name, board) => {
   const leaderboard = getLeaderboard()
   const date = new Date().toISOString()
   const currentKey = `${newDifficulty}-${newRows}-${newCols}`
 
-  snapyr.track('minesweeper-game-completed', { rows: newRows, cols: newCols, difficulty: newDifficulty, name, timer: newTime })
+  const noFlags = !hasFlags(board)
+
+  snapyr.track('minesweeper-game-completed', { rows: newRows, cols: newCols, difficulty: newDifficulty, name, timer: newTime, noFlags })
 
   const updatedExisting = Object.keys(leaderboard).some(key => {
     if (!Array.isArray(leaderboard[key])) return false
@@ -70,7 +73,7 @@ export const saveToLeaderboard = (newTime, newRows, newCols, newDifficulty, name
   const place = leaderboard[currentKey]?.findIndex(({ date: d }) => d === date) ?? -1
 
   if (place !== -1) {
-    snapyr.track('minesweeper-made-leaderboard', { rows: newRows, cols: newCols, difficulty: newDifficulty, name, gameSpec: currentKey, timer: newTime, place: place + 1 })
+    snapyr.track('minesweeper-made-leaderboard', { rows: newRows, cols: newCols, difficulty: newDifficulty, name, gameSpec: currentKey, timer: newTime, place: place + 1, noFlags })
   }
 
   saveLeaderboardObject(leaderboard)

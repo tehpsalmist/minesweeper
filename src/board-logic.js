@@ -61,6 +61,8 @@ export const updateBoard = (board, cell) => {
 
 export const boardCleared = board => board.flatten(true).every(cell => cell.get('isBomb') || cell.get('show'))
 
+export const hasFlags = board => board.flatten(true).some(cell => cell.get('flagged'))
+
 export const getPercentComplete = board => {
   const { complete, total } = board.flatten(true).reduce(({ complete, total }, cell) => {
     return {
