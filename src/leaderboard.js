@@ -38,6 +38,10 @@ const saveLeaderboardObject = leaderboard => {
  */
 export const saveToLeaderboard = (newTime, newRows, newCols, newDifficulty, name) => {
   const leaderboard = getLeaderboard()
+  const date = new Date().toISOString()
+  const currentKey = `${newDifficulty}-${newRows}-${newCols}`
+
+  snapyr.track('minesweeper-game-completed', { rows: newRows, cols: newCols, difficulty: newDifficulty, name, timer: newTime })
 
   const updatedExisting = Object.keys(leaderboard).some(key => {
     if (!Array.isArray(leaderboard[key])) return false
@@ -45,11 +49,7 @@ export const saveToLeaderboard = (newTime, newRows, newCols, newDifficulty, name
     const [difficulty, rows, cols] = key.split('-').map(Number)
 
     if (rows === newRows && cols === newCols && difficulty === newDifficulty) {
-      leaderboard[key].push({
-        time: newTime,
-        name,
-        date: new Date().toISOString()
-      })
+      leaderboard[key].push({ time: newTime, name, date })
 
       leaderboard[key] = leaderboard[key].sort(({ time: a }, { time: b }) => a - b).slice(0, 3)
 
@@ -60,11 +60,17 @@ export const saveToLeaderboard = (newTime, newRows, newCols, newDifficulty, name
   })
 
   if (!updatedExisting) {
-    leaderboard[`${newDifficulty}-${newRows}-${newCols}`] = [{
+    leaderboard[currentKey] = [{
       time: newTime,
       name,
-      date: new Date().toISOString()
+      date
     }]
+  }
+
+  const place = leaderboard[currentKey]?.findIndex(({ date: d }) => d === date) ?? -1
+
+  if (place !== -1) {
+    snapyr.track('minesweeper-made-leaderboard', { rows: newRows, cols: newCols, difficulty: newDifficulty, name, gameSpec: currentKey, timer: newTime, place: place + 1 })
   }
 
   saveLeaderboardObject(leaderboard)

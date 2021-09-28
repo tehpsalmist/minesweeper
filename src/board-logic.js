@@ -60,3 +60,14 @@ export const updateBoard = (board, cell) => {
 }
 
 export const boardCleared = board => board.flatten(true).every(cell => cell.get('isBomb') || cell.get('show'))
+
+export const getPercentComplete = board => {
+  const { complete, total } = board.flatten(true).reduce(({ complete, total }, cell) => {
+    return {
+      complete: cell.get('show') ? complete + 1 : complete,
+      total: total + 1
+    }
+  },{ complete: 0, total: 0 })
+
+  return ((complete / total) * 100).toFixed(2)
+}

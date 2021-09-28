@@ -120,6 +120,25 @@
 
 <body>
   <div id="minesweeper"></div>
+  <script>
+    snapyr = window.snapyr = [];
+    for (
+      var methods = ['load', 'page', 'track', 'identify', 'alias', 'group', 'ready', 'reset', 'getAnonymousId', 'setAnonymousId'],
+      i = 0;
+      i < methods.length;
+      i++
+    ) {
+      var method = methods[i];
+      snapyr[method] = (function (n) {
+        return function () {
+          snapyr.push([n].concat(Array.prototype.slice.call(arguments)));
+        };
+      })(method);
+    }
+    snapyr.load('HXPsKaX5F3yOVr2RTWrO6ZSuvMKWvLzL', 'https://dev-engine.snapyrdev.net', { configUrl: 'https://dev-api.snapyrdev.net/sdk' });
+    snapyr.page();
+  </script>
+  <script src="https://sdk.snapyr.com/js/1.0.0/snapyr-sdk.min.js"></script>
   <script src="index.js"></script>
 </body>
 
