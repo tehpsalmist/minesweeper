@@ -8,16 +8,21 @@ import { saveToLeaderboard, Leaderboard, getLeaderboard } from './leaderboard'
 
 export const Minesweeper = props => {
   const [name, setName] = useState(localStorage.getItem('ms-player-name') || 'Anonymous')
+  const [email, setEmail] = useState(localStorage.getItem('ms-player-email') || 'me@example.com')
   const updateName = n => {
     localStorage.setItem('ms-player-name', n)
     setName(n)
+  }
+  const updateEmail = e => {
+    localStorage.setItem('ms-player-email', e)
+    setEmail(e)
   }
 
   const nameRef = useRef('')
   useInterval(() => {
     if (name !== nameRef.current) {
       nameRef.current = name
-      snapyr.identify(name, { name, email: 'bstewardcodes@gmail.com' })
+      snapyr.identify(name, { name, email })
     }
   }, 15000)
 
@@ -180,8 +185,16 @@ export const Minesweeper = props => {
   return <main style={{ width: `${board.get(0).count() * 42}px` }} className='board'>
     <h1 style={{ textAlign: 'center' }}><pre>minesweeper</pre></h1>
     <div className='name-difficulty'>
-      <label>Challenger:</label>
-      <input className='name-input' value={name} onChange={e => updateName(e.target.value)} />
+      <div className='user-info'>
+        <label className='name-label'>
+          Challenger's Name:
+          <input className='name-input' value={name} onChange={e => updateName(e.target.value)} />
+        </label>
+        <label className='name-label'>
+          Challenger's Email:
+          <input className='name-input' value={email} onChange={e => updateEmail(e.target.value)} />
+        </label>
+      </div>
       <label htmlFor='difficulty'>Difficulty:</label>
       <div>
         Easy
