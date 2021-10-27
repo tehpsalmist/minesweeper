@@ -11,12 +11,14 @@ export const Minesweeper = props => {
   const [email, setEmail] = useRememberedState('ms-player-email', 'me@example.com')
 
   const nameRef = useRef('')
+  const emailRef = useRef('')
   useInterval(() => {
-    if (name !== nameRef.current) {
+    if (name !== nameRef.current || email !== emailRef.current) {
+      emailRef.current = email
       nameRef.current = name
       snapyr.identify(name, { name, email })
     }
-  }, 15000)
+  }, 5000)
 
   const [difficulty, setDifficulty] = useRememberedState('ms-difficulty', 0)
 
