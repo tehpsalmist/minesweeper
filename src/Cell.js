@@ -61,7 +61,7 @@ export const Cell = ({ cell, onClick, onContextMenu }) => {
   const show = cell.get('show')
   const number = cell.get('number')
 
-  const cellValue = `${cell.get('isBomb') ? '💣' : number || ''}`
+  const cellValue = `${number || ''}`
 
   return <div
     className={`cell ${show ? 'open-cell' : 'closed-cell'}`}

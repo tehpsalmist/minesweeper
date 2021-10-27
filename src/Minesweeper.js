@@ -1,22 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { fromJS } from 'immutable'
-import { useInterval } from './hooks'
+import { useInterval, useRememberedState } from './hooks'
 import { Cell } from './Cell'
-import { generateBoard, updateBoard, boardCleared, getPercentComplete } from './board-logic'
+import { generateBoard, updateBoard, boardCleared, getPercentComplete, isSameCell } from './board-logic'
 import { Timer } from './Timer'
 import { saveToLeaderboard, Leaderboard, getLeaderboard } from './leaderboard'
+import { deleteSavedGame, getSavedGame, saveGame } from './save-game'
 
 export const Minesweeper = props => {
-  const [name, setName] = useState(localStorage.getItem('ms-player-name') || 'Anonymous')
-  const [email, setEmail] = useState(localStorage.getItem('ms-player-email') || 'me@example.com')
-  const updateName = n => {
-    localStorage.setItem('ms-player-name', n)
-    setName(n)
-  }
-  const updateEmail = e => {
-    localStorage.setItem('ms-player-email', e)
-    setEmail(e)
-  }
+  const [name, setName] = useRememberedState('ms-player-name', 'Anonymous')
+  const [email, setEmail] = useRememberedState('ms-player-email', 'me@example.com')
 
   const nameRef = useRef('')
   useInterval(() => {
@@ -26,10 +18,10 @@ export const Minesweeper = props => {
     }
   }, 15000)
 
-  const [difficulty, setDifficulty] = useState(Number(localStorage.getItem('ms-difficulty')) || 0)
+  const [difficulty, setDifficulty] = useRememberedState('ms-difficulty', 0)
 
-  const [rows, setRows] = useState(10)
-  const [cols, setCols] = useState(10)
+  const [rows, setRows] = useRememberedState('ms-rows', 10)
+  const [cols, setCols] = useRememberedState('ms-cols', 10)
   const [board, setBoard] = useState(() => generateBoard(difficulty, rows, cols))
 
   const [gameStarted, setGameStarted] = useState(false)
@@ -54,37 +46,56 @@ export const Minesweeper = props => {
     setTimer(0)
   }
 
-  const gameover = () => {
+  const gameover = (clickedCell) => {
     setPlayerAlive(false)
     setGameStarted(false)
-    setBoard(board.map(row => row.map(cell => cell.set('show', true).update('number', val => cell.get('flagged') && !cell.get('isBomb') ? '🚫' : val).set('flagged', false))))
+    setBoard(board.map(row => row.map(cell => {
+      return cell
+        .set('show', true)
+        .update('number', val => {
+          if (cell.get('isBomb')) {
+            return cell.get('flagged') ? '🚩' : isSameCell(clickedCell, cell) ? '💥' : '💣'
+          }
 
-    localStorage.removeItem('board')
-    localStorage.removeItem('boardTime')
-    localStorage.removeItem('currentTime')
+          return cell.get('flagged') ? '🚫' : val
+        })
+        .set('flagged', false)
+    })))
+
+    deleteSavedGame()
   }
 
   const restoreGame = () => {
-    const savedBoard = localStorage.getItem('board')
-    const time = localStorage.getItem('currentTime')
-    const savedDifficulty = localStorage.getItem('ms-difficulty')
-    const boardPauseTime = Number(localStorage.getItem('boardTime'))
+    const {
+      board: savedBoard,
+      currentTime: time,
+      boardTime,
+      difficulty: savedDifficulty,
+      name: savedName,
+      email: savedEmail,
+      rows: savedRows,
+      cols: savedCols
+    } = getSavedGame()
+
+    const boardPauseTime = Number(boardTime)
 
     if (!savedBoard) return
 
-    const restoredBoard = fromJS(JSON.parse(savedBoard))
-
     snapyr.track('minesweeper-game-resumed', {
-      name,
+      name: savedName,
       difficulty: savedDifficulty,
-      rows: restoredBoard.size,
-      cols: restoredBoard.get(0).size,
+      rows: savedBoard.size,
+      cols: savedBoard.get(0).size,
       timer: time,
-      percentComplete: getPercentComplete(restoredBoard),
+      percentComplete: getPercentComplete(savedBoard),
       pauseDuration: Date.now() - boardPauseTime
     })
 
-    setBoard(restoredBoard)
+    setRows(savedRows)
+    setCols(savedCols)
+    setName(savedName)
+    setEmail(savedEmail)
+    setBoard(savedBoard)
     setDifficulty(savedDifficulty)
     setPlayerAlive(true)
     setHasWon(false)
@@ -117,15 +128,15 @@ export const Minesweeper = props => {
       if (cell.get('isBomb')) {
         snapyr.track('minesweeper-bomb', { name, difficulty, rows, cols, timer, cellX: cell.get('col'), cellY: cell.get('row') })
 
-        return gameover()
+        return gameover(cell)
       }
 
       if (!gameStarted) {
         snapyr.track('minesweeper-new-game', { name, difficulty, rows, cols, cellX: cell.get('col'), cellY: cell.get('row') })
 
+        saveGame({ name, email, difficulty, rows, cols })
         setStartTime(Date.now())
         setGameStarted(true)
-        localStorage.setItem('ms-difficulty', difficulty)
       }
 
       snapyr.track('minesweeper-click-cell', { name, difficulty, rows, cols, timer, cellX: cell.get('col'), cellY: cell.get('row') })
@@ -137,49 +148,41 @@ export const Minesweeper = props => {
   const cellFlagged = cell => e => {
     e.preventDefault()
 
-    if (playerAlive && !hasWon && !cell.get('show')) {
-      setBoard(board.updateIn([cell.get('row'), cell.get('col'), 'flagged'], val => !val))
+    if (playerAlive && !hasWon && !cell.get('show') && gameStarted) {
+      setBoard(board.updateIn([cell.get('row'), cell.get('col'), 'flagged'], val => {
+        if (!val) {
+          snapyr.track('minesweeper-flag-cell', { name, difficulty, rows, cols, timer, cellX: cell.get('col'), cellY: cell.get('row') })
+        }
 
-      snapyr.track('minesweeper-flag-cell', { name, difficulty, rows, cols, timer, cellX: cell.get('col'), cellY: cell.get('row') })
-
-      if (!gameStarted) {
-        snapyr.track('minesweeper-new-game', { name, difficulty, rows, cols, cellX: cell.get('col'), cellY: cell.get('row') })
-
-        setStartTime(Date.now())
-        setGameStarted(true)
-      }
+        return !val
+      }))
     }
   }
 
   useEffect(() => {
     if (playerAlive && boardCleared(board)) {
-      localStorage.removeItem('board')
-      localStorage.removeItem('boardTime')
-
+      deleteSavedGame()
       setGameStarted(false)
       setLeaderboard(saveToLeaderboard(timer, board.size, board.get(0).size, difficulty, name, board))
       return setHasWon(true)
     }
 
     if (gameStarted) {
-      const stringBoard = JSON.stringify(board)
-
-      localStorage.setItem('board', stringBoard)
-      localStorage.setItem('boardTime', Date.now())
+      saveGame({ board, boardTime: Date.now() })
     }
   }, [board])
 
   useEffect(() => {
-    const savedRestoreTime = localStorage.getItem('boardTime')
+    const { boardTime } = getSavedGame()
 
-    setRestoreTime(savedRestoreTime && new Date(Number(savedRestoreTime)).toLocaleString())
+    setRestoreTime(boardTime && new Date(Number(boardTime)).toLocaleString())
   }, [gameStarted])
 
   useInterval(() => {
-    const newTime = Math.floor((Date.now() - startTime) / 1000)
+    const currentTime = Math.floor((Date.now() - startTime) / 1000)
 
-    setTimer(newTime)
-    localStorage.setItem('currentTime', newTime)
+    setTimer(currentTime)
+    saveGame({ currentTime })
   }, gameStarted && 1000)
 
   return <main style={{ width: `${board.get(0).count() * 42}px` }} className='board'>
@@ -188,11 +191,11 @@ export const Minesweeper = props => {
       <div className='user-info'>
         <label className='name-label'>
           Challenger's Name:
-          <input className='name-input' value={name} onChange={e => updateName(e.target.value)} />
+          <input className='name-input' value={name} onChange={e => setName(e.target.value)} />
         </label>
         <label className='name-label'>
           Challenger's Email:
-          <input className='name-input' value={email} onChange={e => updateEmail(e.target.value)} />
+          <input className='name-input' value={email} onChange={e => setEmail(e.target.value)} />
         </label>
       </div>
       <label htmlFor='difficulty'>Difficulty:</label>

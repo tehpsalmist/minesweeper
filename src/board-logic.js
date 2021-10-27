@@ -73,3 +73,5 @@ export const getPercentComplete = board => {
 
   return ((complete / total) * 100).toFixed(2)
 }
+
+export const isSameCell = (one, other) => one.get('row') === other.get('row') && one.get('col') === other.get('col')
