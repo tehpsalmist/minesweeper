@@ -268,7 +268,7 @@ export const Minesweeper = props => {
 async function specialInputIsFocused () {
   await sleep(0)
 
-  return document.activeElement?.classList.contains('email-input') || document.activeElement?.classList.contains('name-input')
+  return document.activeElement && (document.activeElement.classList.contains('email-input') || document.activeElement.classList.contains('name-input'))
 }
 
 async function sleep (ms) {
