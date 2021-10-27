@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useInterval, useRememberedState } from './hooks'
+import { useInterval, useOnlyOnce, useRememberedState } from './hooks'
 import { Cell } from './Cell'
 import { generateBoard, updateBoard, boardCleared, getPercentComplete, isSameCell } from './board-logic'
 import { Timer } from './Timer'
@@ -10,15 +10,9 @@ export const Minesweeper = props => {
   const [name, setName] = useRememberedState('ms-player-name', 'Anonymous')
   const [email, setEmail] = useRememberedState('ms-player-email', 'me@example.com')
 
-  const nameRef = useRef('')
-  const emailRef = useRef('')
-  useInterval(() => {
-    if (name !== nameRef.current || email !== emailRef.current) {
-      emailRef.current = email
-      nameRef.current = name
-      snapyr.identify(name, { name, email })
-    }
-  }, 5000)
+  useOnlyOnce(() => {
+    snapyr.identify(name, { name, email })
+  })
 
   const [difficulty, setDifficulty] = useRememberedState('ms-difficulty', 0)
 
@@ -193,11 +187,25 @@ export const Minesweeper = props => {
       <div className='user-info'>
         <label className='name-label'>
           Challenger's Name:
-          <input className='name-input' value={name} onChange={e => setName(e.target.value)} />
+          <input
+            className='name-input'
+            value={name}
+            onBlur={async e => {
+              if (!(await specialInputIsFocused())) snapyr.identify(name, { name, email })
+            }}
+            onChange={e => setName(e.target.value)}
+          />
         </label>
         <label className='name-label'>
           Challenger's Email:
-          <input className='name-input' value={email} onChange={e => setEmail(e.target.value)} />
+          <input
+            className='email-input'
+            value={email}
+            onBlur={async e => {
+              if (!(await specialInputIsFocused())) snapyr.identify(name, { name, email })
+            }}
+            onChange={e => setEmail(e.target.value)}
+          />
         </label>
       </div>
       <label htmlFor='difficulty'>Difficulty:</label>
@@ -255,4 +263,14 @@ export const Minesweeper = props => {
     </button>}
     <Leaderboard leaderboard={leaderboard} chooseGame={reset} />
   </main>
+}
+
+async function specialInputIsFocused () {
+  await sleep(0)
+
+  return document.activeElement?.classList.contains('email-input') || document.activeElement?.classList.contains('name-input')
+}
+
+async function sleep (ms) {
+  return new Promise(res => setTimeout(res, ms))
 }

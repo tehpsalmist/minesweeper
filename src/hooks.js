@@ -49,3 +49,12 @@ export function useRememberedState(key, initialValue) {
 
   return [storedValue, setValue];
 }
+
+export const useOnlyOnce = (callback, condition = true) => {
+  const hasRunOnce = useRef(false);
+
+  if (!hasRunOnce.current && condition) {
+    callback();
+    hasRunOnce.current = true;
+  }
+}
