@@ -22,14 +22,12 @@
   },
   "homepage": "https://github.com/tehpsalmist/minesweeper#readme",
   "dependencies": {
+    "@babel/polyfill": "^7.12.1",
     "immutable": "^4.0.0-rc.12",
     "react": "^16.9.0",
     "react-dom": "^16.9.0"
   },
   "devDependencies": {
     "parcel": "^1.12.4"
-  },
-  "browserslist": [
-    "last 1 Chrome version"
-  ]
+  }
 }

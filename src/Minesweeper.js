@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import "@babel/polyfill";
 import { useInterval, useOnlyOnce, useRememberedState } from './hooks'
 import { Cell } from './Cell'
 import { generateBoard, updateBoard, boardCleared, getPercentComplete, isSameCell } from './board-logic'
