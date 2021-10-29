@@ -12,7 +12,9 @@ export const Minesweeper = props => {
   const [email, setEmail] = useRememberedState('ms-player-email', 'me@example.com')
 
   useOnlyOnce(() => {
+    console.log('initial identify')
     snapyr.identify(name, { name, email })
+    console.log('initial identify presumably succeeded')
   })
 
   const [difficulty, setDifficulty] = useRememberedState('ms-difficulty', 0)
@@ -192,7 +194,11 @@ export const Minesweeper = props => {
             className='name-input'
             value={name}
             onBlur={async e => {
-              if (!(await specialInputIsFocused())) snapyr.identify(name, { name, email })
+              if (!(await specialInputIsFocused())) {
+                console.log('subsequent identify event')
+                snapyr.identify(name, { name, email })
+                console.log('subsequent identify event presumably succeeded')
+              }
             }}
             onChange={e => setName(e.target.value)}
           />
@@ -203,7 +209,11 @@ export const Minesweeper = props => {
             className='email-input'
             value={email}
             onBlur={async e => {
-              if (!(await specialInputIsFocused())) snapyr.identify(name, { name, email })
+              if (!(await specialInputIsFocused())) {
+                console.log('subsequent identify event')
+                snapyr.identify(name, { name, email })
+                console.log('subsequent identify event presumably succeeded')
+              }
             }}
             onChange={e => setEmail(e.target.value)}
           />
