@@ -10,10 +10,11 @@ import { deleteSavedGame, getSavedGame, saveGame } from './save-game'
 export const Minesweeper = props => {
   const [name, setName] = useRememberedState('ms-player-name', 'Anonymous')
   const [email, setEmail] = useRememberedState('ms-player-email', 'me@example.com')
+  const [phone, setPhone] = useRememberedState('ms-player-phone', '')
 
   useOnlyOnce(() => {
     console.log('initial identify')
-    snapyr.identify(name, { name, email })
+    snapyr.identify(name, { name, email, phone })
     console.log('initial identify presumably succeeded')
   })
 
@@ -203,7 +204,7 @@ export const Minesweeper = props => {
             onChange={e => setName(e.target.value)}
           />
         </label>
-        <label className='name-label'>
+        <label className='email-label'>
           Challenger's Email:
           <input
             className='email-input'
@@ -211,11 +212,26 @@ export const Minesweeper = props => {
             onBlur={async e => {
               if (!(await specialInputIsFocused())) {
                 console.log('subsequent identify event')
-                snapyr.identify(name, { name, email })
+                snapyr.identify(name, { name, email, phone })
                 console.log('subsequent identify event presumably succeeded')
               }
             }}
             onChange={e => setEmail(e.target.value)}
+          />
+        </label>
+        <label className='phone-label'>
+          Challenger's Phone:
+          <input
+            className='phone-input'
+            value={phone}
+            onBlur={async e => {
+              if (!(await specialInputIsFocused())) {
+                console.log('subsequent identify event')
+                snapyr.identify(name, { name, email, phone })
+                console.log('subsequent identify event presumably succeeded')
+              }
+            }}
+            onChange={e => setPhone(e.target.value)}
           />
         </label>
       </div>

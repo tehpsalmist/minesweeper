@@ -23,7 +23,9 @@
       justify-content: space-evenly;
     }
 
-    .name-label {
+    .name-label,
+    .email-label,
+    .phone-label {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -31,11 +33,33 @@
     }
 
     .name-input,
-    .email-input {
+    .email-input,
+    .phone-input {
       text-align: center;
       margin-bottom: 20px;
       color: darkgreen;
       width: 300px;
+    }
+
+    @media screen and (max-width: 900px) {
+
+      .name-input,
+      .email-input,
+      .phone-input {
+        width: 200px;
+      }
+    }
+
+    @media screen and (max-width: 600px) {
+      .user-info {
+        flex-direction: column;
+      }
+
+      .name-input,
+      .email-input,
+      .phone-input {
+        width: 300px;
+      }
     }
 
     .board {
