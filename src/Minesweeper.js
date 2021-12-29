@@ -14,8 +14,9 @@ export const Minesweeper = props => {
 
   useOnlyOnce(() => {
     console.log('initial identify')
-    snapyr.identify(name, { name, email, phone })
-    console.log('initial identify presumably succeeded')
+    snapyr.identify(name, { name, email, mobilePhone: phone }, () => {
+      console.log('initial identify presumably succeeded')
+    })
   })
 
   const [difficulty, setDifficulty] = useRememberedState('ms-difficulty', 0)
@@ -197,8 +198,9 @@ export const Minesweeper = props => {
             onBlur={async e => {
               if (!(await specialInputIsFocused())) {
                 console.log('subsequent identify event')
-                snapyr.identify(name, { name, email })
-                console.log('subsequent identify event presumably succeeded')
+                snapyr.identify(name, { name, email, mobilePhone: phone }, () => {
+                  console.log('subsequent identify event presumably succeeded')
+                })
               }
             }}
             onChange={e => setName(e.target.value)}
@@ -212,8 +214,9 @@ export const Minesweeper = props => {
             onBlur={async e => {
               if (!(await specialInputIsFocused())) {
                 console.log('subsequent identify event')
-                snapyr.identify(name, { name, email, phone })
-                console.log('subsequent identify event presumably succeeded')
+                snapyr.identify(name, { name, email, mobilePhone: phone }, () => {
+                  console.log('subsequent identify event presumably succeeded')
+                })
               }
             }}
             onChange={e => setEmail(e.target.value)}
@@ -227,8 +230,9 @@ export const Minesweeper = props => {
             onBlur={async e => {
               if (!(await specialInputIsFocused())) {
                 console.log('subsequent identify event')
-                snapyr.identify(name, { name, email, phone })
-                console.log('subsequent identify event presumably succeeded')
+                snapyr.identify(name, { name, email, mobilePhone: phone }, () => {
+                  console.log('subsequent identify event presumably succeeded')
+                })
               }
             }}
             onChange={e => setPhone(e.target.value)}
@@ -295,7 +299,7 @@ export const Minesweeper = props => {
 async function specialInputIsFocused () {
   await sleep(0)
 
-  return document.activeElement && (document.activeElement.classList.contains('email-input') || document.activeElement.classList.contains('name-input'))
+  return document.activeElement && (document.activeElement.classList.contains('email-input') ||document.activeElement.classList.contains('name-input') || document.activeElement.classList.contains('phone-input'))
 }
 
 async function sleep (ms) {

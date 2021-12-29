@@ -11,6 +11,10 @@
       font-family: monospace;
     }
 
+    body {
+      background-color: white;
+    }
+
     .name-difficulty {
       display: flex;
       align-items: center;
@@ -172,8 +176,31 @@
         };
       })(method);
     }
-    snapyr.load('zmOOGcq00BZyRI1bXfvzKjsORZalJEz9', 'https://dev-engine.snapyrdev.net', { configUrl: 'https://dev-api.snapyrdev.net/sdk' });
+
+    const searchParams = new URLSearchParams(location.search)
+
+    const keyFromSearchParams = searchParams.get('snapyrApiKey')
+
+    if (keyFromSearchParams) {
+      localStorage.setItem('snapyr-api-key', keyFromSearchParams)
+    }
+
+    const key = localStorage.getItem('snapyr-api-key')
+
+    snapyr.load(key ?? 'zmOOGcq00BZyRI1bXfvzKjsORZalJEz9', 'https://dev-engine.snapyrdev.net', {
+      configUrl: 'https://dev-api.snapyrdev.net/sdk'
+    })
     snapyr.page();
+
+    const email = searchParams.get('email')
+    const name = searchParams.get('userId')
+
+    if (email) {
+      localStorage.setItem('ms-player-email', JSON.stringify(email))
+    }
+    if (name) {
+      localStorage.setItem('ms-player-name', JSON.stringify(name))
+    }
   </script>
   <script src="https://sdk.snapyr.com/js/1.0.0/snapyr-sdk.min.js"></script>
   <script src="index.js"></script>
