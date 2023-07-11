@@ -1,209 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Minesweeper</title>
-  <style>
-    * {
-      font-family: monospace;
-    }
-
-    body {
-      background-color: white;
-    }
-
-    .name-difficulty {
-      display: flex;
-      align-items: center;
-      flex-direction: column;
-      width: 100%;
-    }
-
-    .user-info {
-      display: flex;
-      justify-content: space-evenly;
-    }
-
-    .name-label,
-    .email-label,
-    .phone-label {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-    }
-
-    .name-input,
-    .email-input,
-    .phone-input {
-      text-align: center;
-      margin-bottom: 20px;
-      color: darkgreen;
-      width: 300px;
-    }
-
-    @media screen and (max-width: 900px) {
-
-      .name-input,
-      .email-input,
-      .phone-input {
-        width: 200px;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Minesweeper</title>
+    <style>
+      * {
+        font-family: monospace;
       }
-    }
 
-    @media screen and (max-width: 600px) {
+      body {
+        background-color: white;
+      }
+
+      .name-difficulty {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        width: 100%;
+      }
+
       .user-info {
+        display: flex;
+        justify-content: space-evenly;
+      }
+
+      .name-label,
+      .email-label,
+      .phone-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         flex-direction: column;
       }
 
       .name-input,
       .email-input,
       .phone-input {
+        text-align: center;
+        margin-bottom: 20px;
+        color: darkgreen;
         width: 300px;
       }
-    }
 
-    .board {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: 0 auto;
-    }
+      @media screen and (max-width: 900px) {
+        .name-input,
+        .email-input,
+        .phone-input {
+          width: 200px;
+        }
+      }
 
-    .smiley-row {
-      display: flex;
-      justify-content: center;
-    }
+      @media screen and (max-width: 600px) {
+        .user-info {
+          flex-direction: column;
+        }
 
-    .smiley {
-      text-align: center;
-      font-size: 40px;
-      cursor: pointer;
-      border: none;
-      background-color: transparent;
-    }
+        .name-input,
+        .email-input,
+        .phone-input {
+          width: 300px;
+        }
+      }
 
-    .rows-columns {
-      display: flex;
-      justify-content: space-evenly;
-      width: 100%;
-      margin-top: 20px;
-    }
+      .board {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0 auto;
+      }
 
-    .timer {
-      background-color: #333333;
-      color: red;
-      padding: 4px 8px;
-      font-size: 20px;
-      margin-bottom: 20px;
-      border-radius: 4px;
-    }
+      .smiley-row {
+        display: flex;
+        justify-content: center;
+      }
 
-    .cell {
-      height: 40px;
-      width: 40px;
-      display: flex;
-      background-color: gray;
-      justify-content: center;
-      align-items: center;
-      border: solid black 1px;
-      font-size: 24px;
-      font-weight: 600;
-    }
+      .smiley {
+        text-align: center;
+        font-size: 40px;
+        cursor: pointer;
+        border: none;
+        background-color: transparent;
+      }
 
-    .open-cell {
-      background-color: white;
-    }
+      .rows-columns {
+        display: flex;
+        justify-content: space-evenly;
+        width: 100%;
+        margin-top: 20px;
+      }
 
-    .closed-cell:hover {
-      background-color: lightgray;
-      cursor: pointer;
-    }
+      .timer {
+        background-color: #333333;
+        color: red;
+        padding: 4px 8px;
+        font-size: 20px;
+        margin-bottom: 20px;
+        border-radius: 4px;
+      }
 
-    .restore-button {
-      margin-top: 20px;
-      background: linear-gradient(blue, darkblue);
-      border-radius: 4px;
-      padding: 8px;
-      color: white;
-      cursor: pointer;
-    }
+      .cell {
+        height: 40px;
+        width: 40px;
+        display: flex;
+        background-color: gray;
+        justify-content: center;
+        align-items: center;
+        border: solid black 1px;
+        font-size: 24px;
+        font-weight: 600;
+      }
 
-    .leaderboard-group-heading {
-      cursor: pointer;
-    }
+      .open-cell {
+        background-color: white;
+      }
 
-    .leaderboard-group-heading:hover {
-      color: darkgreen;
-    }
+      .closed-cell:hover {
+        background-color: lightgray;
+        cursor: pointer;
+      }
 
-    .record-item {
-      list-style: none;
-      padding: 0;
-    }
+      .restore-button {
+        margin-top: 20px;
+        background: linear-gradient(blue, darkblue);
+        border-radius: 4px;
+        padding: 8px;
+        color: white;
+        cursor: pointer;
+      }
 
-    .record-item:nth-of-type(1) .record-time {
-      color: blue;
-    }
+      .leaderboard-group-heading {
+        cursor: pointer;
+      }
 
-    .record-item:nth-of-type(2) .record-time {
-      color: darkgreen;
-    }
+      .leaderboard-group-heading:hover {
+        color: darkgreen;
+      }
 
-    .record-item:nth-of-type(3) .record-time {
-      color: red;
-    }
-  </style>
-</head>
+      .record-item {
+        list-style: none;
+        padding: 0;
+      }
 
-<body>
-  <div id="minesweeper"></div>
-  <script>
-    snapyr = window.snapyr = [];
-    for (
-      var methods = ['load', 'page', 'track', 'identify', 'alias', 'group', 'ready', 'reset', 'getAnonymousId', 'setAnonymousId'],
-      i = 0;
-      i < methods.length;
-      i++
-    ) {
-      var method = methods[i];
-      snapyr[method] = (function (n) {
-        return function () {
-          snapyr.push([n].concat(Array.prototype.slice.call(arguments)));
-        };
-      })(method);
-    }
+      .record-item:nth-of-type(1) .record-time {
+        color: blue;
+      }
 
-    const searchParams = new URLSearchParams(location.search)
+      .record-item:nth-of-type(2) .record-time {
+        color: darkgreen;
+      }
 
-    const keyFromSearchParams = searchParams.get('snapyrApiKey')
+      .record-item:nth-of-type(3) .record-time {
+        color: red;
+      }
+    </style>
+  </head>
 
-    if (keyFromSearchParams) {
-      localStorage.setItem('snapyr-api-key', keyFromSearchParams)
-    }
-
-    const key = localStorage.getItem('snapyr-api-key')
-
-    snapyr.load(key ?? 'zmOOGcq00BZyRI1bXfvzKjsORZalJEz9', 'https://dev-engine.snapyrdev.net', {
-      configUrl: 'https://dev-api.snapyrdev.net/sdk'
-    })
-    snapyr.page();
-
-    const email = searchParams.get('email')
-    const name = searchParams.get('userId')
-
-    if (email) {
-      localStorage.setItem('ms-player-email', JSON.stringify(email))
-    }
-    if (name) {
-      localStorage.setItem('ms-player-name', JSON.stringify(name))
-    }
-  </script>
-  <script src="https://sdk.snapyr.com/js/1.0.0/snapyr-sdk.min.js"></script>
-  <script src="index.js"></script>
-</body>
-
+  <body>
+    <div id="minesweeper"></div>
+    <script src="index.js"></script>
+  </body>
 </html>
