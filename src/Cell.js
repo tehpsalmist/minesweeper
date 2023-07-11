@@ -66,7 +66,7 @@ export const Cell = ({ cell, onClick, onContextMenu }) => {
   return (
     <div
       className={`cell ${show ? "open-cell" : "closed-cell"}`}
-      style={{ color: scheme[number] || "black" }}
+      style={{ color: scheme[number] || "black", userSelect: "none" }}
       onClick={handleClick}
       onContextMenu={onContextMenu}
       onTouchStart={touchStart}
