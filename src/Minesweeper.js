@@ -187,7 +187,7 @@ export const Minesweeper = (props) => {
   }, gameStarted && 1000);
 
   return (
-    <main style={{ width: `${board.get(0).count() * 42}px` }} className="board">
+    <main className="board">
       <h1 style={{ textAlign: "center" }}>
         <pre>minesweeper</pre>
       </h1>
@@ -265,18 +265,22 @@ export const Minesweeper = (props) => {
         </button>
       </h2>
       <Timer seconds={timer} />
-      {board.map((row, index) => (
-        <div key={index} style={{ display: "flex" }}>
-          {row.map((cell, i) => (
-            <Cell
-              key={i}
-              cell={cell}
-              onClick={cellClicked(cell)}
-              onContextMenu={cellFlagged(cell)}
-            />
+      <div className="board-wrapper">
+        <div style={{ width: `${board.get(0).count() * 42}px` }}>
+          {board.map((row, index) => (
+            <div key={index} style={{ display: "flex" }}>
+              {row.map((cell, i) => (
+                <Cell
+                  key={i}
+                  cell={cell}
+                  onClick={cellClicked(cell)}
+                  onContextMenu={cellFlagged(cell)}
+                />
+              ))}
+            </div>
           ))}
         </div>
-      ))}
+      </div>
       {restoreTime && !gameStarted && (
         <button
           className="restore-button"
