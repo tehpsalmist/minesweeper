@@ -54,7 +54,6 @@ export const Cell = ({ cell, onClick, onContextMenu }) => {
 
   const cleanUp = (e) => {
     e.preventDefault();
-    e.stopPropagation();
     clearTimeout(timerRef.current);
     timerRef.current = null;
   };
