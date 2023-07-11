@@ -69,6 +69,7 @@ export const Cell = ({ cell, onClick, onContextMenu }) => {
       style={{
         color: scheme[number] || "black",
         userSelect: "none",
+        WebkitUserSelect: "none",
         touchAction: "manipulation",
       }}
       onClick={handleClick}
