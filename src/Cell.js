@@ -1,79 +1,83 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef } from "react";
 
 const scheme = {
-  1: 'blue',
-  2: 'darkgreen',
-  3: 'red',
-  4: 'darkblue',
-  5: 'maroon',
-  6: 'turquoise',
-  7: 'black',
-  8: 'gray'
-}
+  1: "blue",
+  2: "darkgreen",
+  3: "red",
+  4: "darkblue",
+  5: "maroon",
+  6: "turquoise",
+  7: "black",
+  8: "gray",
+};
 
 export const Cell = ({ cell, onClick, onContextMenu }) => {
-  const timerRef = useRef(null)
-  const rightClickRef = useRef()
-  const [flaggedOnMouseDown, setFlaggedOnMouseDown] = useState(false)
+  const timerRef = useRef(null);
+  const rightClickRef = useRef();
+  const [flaggedOnMouseDown, setFlaggedOnMouseDown] = useState(false);
 
-  rightClickRef.current = onContextMenu
+  rightClickRef.current = onContextMenu;
 
-  const touchStart = e => {
-    e.preventDefault()
-    e.persist()
+  const touchStart = (e) => {
+    e.preventDefault();
+    e.persist();
 
-    setFlaggedOnMouseDown(cell.get('flagged'))
+    setFlaggedOnMouseDown(cell.get("flagged"));
 
-    function leaveListener (event) {
-      clearTimeout(timerRef.current)
-      timerRef.current = null
+    function leaveListener(event) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
 
-      e.target.removeEventListener('mouseleave', leaveListener)
+      e.target.removeEventListener("mouseleave", leaveListener);
     }
 
-    e.target.addEventListener('mouseleave', leaveListener)
+    e.target.addEventListener("mouseleave", leaveListener);
 
     const newTimer = setTimeout(() => {
-      rightClickRef.current(e)
-      window.navigator.vibrate(10)
+      rightClickRef.current(e);
+      window.navigator.vibrate(10);
 
-      timerRef.current = null
-      e.target.removeEventListener('mouseleave', leaveListener)
-    }, 500)
+      timerRef.current = null;
+      e.target.removeEventListener("mouseleave", leaveListener);
+    }, 500);
 
-    timerRef.current = newTimer
-  }
+    timerRef.current = newTimer;
+  };
 
-  const handleClick = e => {
+  const handleClick = (e) => {
     if (flaggedOnMouseDown) {
-      return setFlaggedOnMouseDown(false)
+      return setFlaggedOnMouseDown(false);
     }
 
-    onClick(e)
-  }
+    onClick(e);
+  };
 
-  const cleanUp = e => {
-    clearTimeout(timerRef.current)
-    timerRef.current = null
-  }
+  const cleanUp = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    clearTimeout(timerRef.current);
+    timerRef.current = null;
+  };
 
-  const flagged = cell.get('flagged')
-  const show = cell.get('show')
-  const number = cell.get('number')
+  const flagged = cell.get("flagged");
+  const show = cell.get("show");
+  const number = cell.get("number");
 
-  const cellValue = `${number || ''}`
+  const cellValue = `${number || ""}`;
 
-  return <div
-    className={`cell ${show ? 'open-cell' : 'closed-cell'}`}
-    style={{ color: scheme[number] || 'black' }}
-    onClick={handleClick}
-    onContextMenu={onContextMenu}
-    onTouchStart={touchStart}
-    onMouseDown={touchStart}
-    onTouchEnd={cleanUp}
-    onTouchCancel={cleanUp}
-    onMouseUp={cleanUp}
-  >
-    {flagged ? '🚩' : show ? cellValue : ''}
-  </div>
-}
+  return (
+    <div
+      className={`cell ${show ? "open-cell" : "closed-cell"}`}
+      style={{ color: scheme[number] || "black" }}
+      onClick={handleClick}
+      onContextMenu={onContextMenu}
+      onTouchStart={touchStart}
+      onMouseDown={touchStart}
+      onTouchEnd={cleanUp}
+      onTouchCancel={cleanUp}
+      onMouseUp={cleanUp}
+    >
+      {flagged ? "🚩" : show ? cellValue : ""}
+    </div>
+  );
+};
