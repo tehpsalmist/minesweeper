@@ -272,11 +272,11 @@ export const Minesweeper = (props) => {
               key={index}
               style={{
                 display: "flex",
-                borderTop: index === 0 ? "1px solid darkgray" : undefined,
-                borderLeft: "1px solid darkgray",
-                borderRight: "1px solid darkgray",
+                borderTop: index === 0 ? "3px solid black" : undefined,
+                borderLeft: "3px solid black",
+                borderRight: "3px solid black",
                 borderBottom:
-                  index === arr.size - 1 ? "1px solid darkgray" : undefined,
+                  index === arr.size - 1 ? "3px solid black" : undefined,
               }}
             >
               {row.map((cell, i) => (
