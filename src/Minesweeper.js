@@ -267,8 +267,18 @@ export const Minesweeper = (props) => {
       <Timer seconds={timer} />
       <div className="board-wrapper">
         <div style={{ width: `${board.get(0).count() * 42}px` }}>
-          {board.map((row, index) => (
-            <div key={index} style={{ display: "flex" }}>
+          {board.map((row, index, arr) => (
+            <div
+              key={index}
+              style={{
+                display: "flex",
+                borderTop: index === 0 ? "1px solid darkgray" : undefined,
+                borderLeft: "1px solid darkgray",
+                borderRight: "1px solid darkgray",
+                borderBottom:
+                  index === arr.size - 1 ? "1px solid darkgray" : undefined,
+              }}
+            >
               {row.map((cell, i) => (
                 <Cell
                   key={i}
